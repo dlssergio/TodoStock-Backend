@@ -1,0 +1,14 @@
+[
+  {
+    "id": 1,
+    "nombre": "Lavandina",
+    "precio": 1200,
+    "stock": 50
+  },
+  {
+    "id": 2,
+    "nombre": "Esponja",
+    "precio": 500,
+    "stock": 15
+  }
+]

@@ -1,0 +1,24 @@
+[
+  {
+    "id": 1,
+    "cliente": "Supermercado Diaz",
+    "productos": [
+      {
+        "productoId": 1,
+        "cantidad": 5
+      }
+    ],
+    "total": 6000
+  },
+  {
+    "id": 2,
+    "cliente": "Hipermercado Perez",
+    "productos": [
+      {
+        "productoId": 2,
+        "cantidad": 15
+      }
+    ],
+    "total": 500
+  }
+]
