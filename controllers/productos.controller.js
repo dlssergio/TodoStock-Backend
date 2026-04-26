@@ -1,5 +1,6 @@
 const fs = require('fs');
 const path = require('path');
+const Producto = require('../models/Producto');
 
 // Ruta al archivo JSON
 const filePath = path.join(__dirname, '../data/productos.json');
@@ -17,12 +18,12 @@ const createProducto = (req, res) => {
     const data = fs.readFileSync(filePath, 'utf-8');
     const productos = JSON.parse(data);
 
-    const nuevoProducto = {
-        id: productos.length + 1,
-        nombre: req.body.nombre,
-        precio: req.body.precio,
-        stock: req.body.stock
-    };
+    const nuevoProducto = new Producto(
+    productos.length + 1,
+    req.body.nombre,
+    req.body.precio,
+    req.body.stock
+    );
 
     productos.push(nuevoProducto);
 

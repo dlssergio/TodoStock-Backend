@@ -1,5 +1,35 @@
-h1 Lista de Pedidos
+html
+  head
+    style.
+      body {
+        font-family: Arial, sans-serif;
+        margin: 20px;
+        background-color: #f4f4f4;
+      }
 
-ul
-  each pedido in pedidos
-    li Cliente: #{pedido.cliente} - Total: $#{pedido.total}
+      h1 {
+        color: #333;
+      }
+
+      ul {
+        background: white;
+        padding: 15px;
+        border-radius: 5px;
+        list-style: none;
+      }
+
+      li {
+        padding: 5px 0;
+        border-bottom: 1px solid #ddd;
+      }
+
+  body
+    h1 Lista de Pedidos
+
+    if pedidos.length > 0
+      p Pedidos registrados:
+      ul
+        each pedido in pedidos
+          li Cliente: #{pedido.cliente} - Total: $#{pedido.total}
+    else
+      p No hay pedidos cargados

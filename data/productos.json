@@ -10,5 +10,41 @@
     "nombre": "Esponja",
     "precio": 500,
     "stock": 15
+  },
+  {
+    "id": 3,
+    "nombre": "Cepillo",
+    "precio": 1200,
+    "stock": 30
+  },
+  {
+    "id": 4,
+    "nombre": "Detergente Industrial 5L",
+    "precio": 4500,
+    "stock": 20
+  },
+  {
+    "id": 5,
+    "nombre": "Lavandina 10 L",
+    "precio": 10500,
+    "stock": 25
+  },
+  {
+    "id": 6,
+    "nombre": "Balde 20 Litros",
+    "precio": 1500,
+    "stock": 35
+  },
+  {
+    "id": 7,
+    "nombre": "Balde 20 Litros",
+    "precio": 1500,
+    "stock": 35
+  },
+  {
+    "id": 8,
+    "nombre": "Limpiador Desinfectante de Pisos 900cc",
+    "precio": 2799,
+    "stock": 35
   }
 ]

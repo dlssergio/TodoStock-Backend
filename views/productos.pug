@@ -1,5 +1,35 @@
-h1 Lista de Productos
+html
+  head
+    style.
+      body {
+        font-family: Arial, sans-serif;
+        margin: 20px;
+        background-color: #f4f4f4;
+      }
 
-ul
-  each producto in productos
-    li #{producto.nombre} - $#{producto.precio} - Stock: #{producto.stock}
+      h1 {
+        color: #333;
+      }
+
+      ul {
+        background: white;
+        padding: 15px;
+        border-radius: 5px;
+        list-style: none;
+      }
+
+      li {
+        padding: 5px 0;
+        border-bottom: 1px solid #ddd;
+      }
+
+  body
+    h1 Lista de Productos
+
+    if productos.length > 0
+      p Productos disponibles:
+      ul
+        each producto in productos
+          li #{producto.nombre} - $#{producto.precio} - Stock: #{producto.stock}
+    else
+      p No hay productos cargados

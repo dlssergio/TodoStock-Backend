@@ -20,5 +20,16 @@
       }
     ],
     "total": 500
+  },
+  {
+    "id": 3,
+    "cliente": "Hipermercado Bellavista",
+    "productos": [
+      {
+        "productoId": 3,
+        "cantidad": 1
+      }
+    ],
+    "total": 3000
   }
 ]
