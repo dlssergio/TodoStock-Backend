@@ -1,10 +1,14 @@
+require('dotenv').config();
 const express = require('express');
+const conectarDB = require('./config/db');
+
 const app = express();
+const PORT = process.env.PORT || 3000;
 
 const fs = require('fs');
 const path = require('path');
 
-const PORT = 3000;
+conectarDB();
 
 // Middleware para leer JSON
 app.use(express.json());
