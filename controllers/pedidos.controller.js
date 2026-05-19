@@ -1,38 +1,46 @@
-const fs = require('fs');
-const path = require('path');
 const Pedido = require('../models/Pedido');
 
-// Ruta al archivo JSON
-const filePath = path.join(__dirname, '../data/pedidos.json');
-
-// Obtener todos los pedidos
-const getPedidos = (req, res) => {
-    const data = fs.readFileSync(filePath, 'utf-8');
-    const pedidos = JSON.parse(data);
-
-    res.json(pedidos);
+// 1. OBTENER TODOS LOS PEDIDOS
+const getPedidos = async (req, res) => {
+    try {
+        const pedidos = await Pedido.find().populate('productos');
+        res.render('pedidos', { pedidos });
+    } catch (error) {
+        console.error("Error al obtener pedidos:", error);
+        res.status(500).send("Error interno del servidor al cargar los pedidos.");
+    }
 };
 
-// Generar un pedido
-const createPedido = (req, res) => {
-    const data = fs.readFileSync(filePath, 'utf-8');
-    const pedidos = JSON.parse(data);
-
-    const nuevoPedido = new Pedido(
-        pedidos.length + 1,
-        req.body.cliente,
-        req.body.productos,
-        req.body.total
-    );
-
-    pedidos.push(nuevoPedido);
-
-    fs.writeFileSync(filePath, JSON.stringify(pedidos, null, 2));
-
-    res.json(nuevoPedido);
+// 2. CREAR UN NUEVO PEDIDO
+const createPedido = async (req, res) => {
+    try {
+        const { cliente, productos, total, estado } = req.body;
+        const nuevoPedido = new Pedido({
+            cliente,
+            productos,
+            total,
+            estado: estado || 'pendiente'
+        });
+        await nuevoPedido.save();
+        res.redirect('/pedidos');
+    } catch (error) {
+        console.error("Error al crear pedido:", error);
+        res.status(400).send("Error al guardar el pedido. Verifique las validaciones.");
+    }
 };
 
-module.exports = {
-    getPedidos,
-    createPedido
+// 3. OBTENER UN PEDIDO POR SU ID
+const getPedidoById = async (req, res) => {
+    try {
+        const pedido = await Pedido.findById(req.params.id).populate('productos');
+        if (!pedido) {
+            return res.status(404).render('error', { mensaje: 'Pedido no encontrado' });
+        }
+        res.render('detallePedido', { pedido });
+    } catch (error) {
+        console.error("Error al obtener pedido por ID:", error);
+        res.status(500).send("Error al buscar el pedido solicitado.");
+    }
 };
+
+module.exports = { getPedidos, createPedido, getPedidoById };
