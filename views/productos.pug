@@ -29,7 +29,12 @@ html
     if productos.length > 0
       p Productos disponibles:
       ul
+      //-
         each producto in productos
           li #{producto.nombre} - $#{producto.precio} - Stock: #{producto.stock}
+      -//
+        each producto in productos
+          li #{producto.nombre} - $#{producto.precio} - Stock: #{producto.stock}
+            a(href=`/productos/${producto._id}`) (Ver detalle)
     else
       p No hay productos cargados
