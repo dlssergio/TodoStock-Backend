@@ -22,7 +22,7 @@ html
         padding: 5px 0;
         border-bottom: 1px solid #ddd;
       }
-
+//-
   body
     h1 Lista de Pedidos
 
@@ -31,5 +31,31 @@ html
       ul
         each pedido in pedidos
           li Cliente: #{pedido.cliente} - Total: $#{pedido.total}
+    else
+      p No hay pedidos cargados
+-//
+  body
+    h1 Lista de Pedidos
+
+    if pedidos.length > 0
+      p Pedidos registrados:
+      ul
+        each pedido in pedidos
+          li
+          //-
+            strong Cliente: #{pedido.cliente} 
+            | - Total: $#{pedido.total}
+          -//
+
+            strong Cliente: #{pedido.cliente} - Total: $#{pedido.total} 
+            a(href=`/pedidos/${pedido._id}`) (Ver detalle del pedido)
+            
+            //- sublista con los productos
+            ul(style="margin-top: 10px; margin-bottom: 15px; background: #e9ecef; border-radius: 4px;")
+              if pedido.productos.length > 0
+                each producto in pedido.productos
+                  li #{producto.nombre} - Precio: $#{producto.precio}
+              else
+                li No hay productos registrados para este pedido.
     else
       p No hay pedidos cargados

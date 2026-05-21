@@ -5,44 +5,27 @@ const conectarDB = require('./config/db');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-const fs = require('fs');
-const path = require('path');
-
 conectarDB();
 
-// Middleware para leer JSON
+// Middleware para leer JSON y formularios
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
-// Configurar Pug
+// Configurar Pug y archivos estáticos
 app.set('view engine', 'pug');
 app.set('views', './views');
+app.use(express.static('public'));
 
-// Importar rutas
+// Importar rutas 
 const productosRoutes = require('./routes/productos.routes');
 const pedidosRoutes = require('./routes/pedidos.routes');
 
-// Usar rutas
+// Usar rutas 
 app.use('/productos', productosRoutes);
 app.use('/pedidos', pedidosRoutes);
 
 app.get('/', (req, res) => {
-    res.send('TodoStock funcionando');
-});
-
-app.get('/vista-productos', (req, res) => {
-    const filePath = path.join(__dirname, './data/productos.json');
-    const data = fs.readFileSync(filePath, 'utf-8');
-    const productos = JSON.parse(data);
-
-    res.render('productos', { productos });
-});
-
-app.get('/vista-pedidos', (req, res) => {
-    const filePath = path.join(__dirname, './data/pedidos.json');
-    const data = fs.readFileSync(filePath, 'utf-8');
-    const pedidos = JSON.parse(data);
-
-    res.render('pedidos', { pedidos });
+    res.send('TodoStock funcionando. Navega a /productos o /pedidos');
 });
 
 app.listen(PORT, () => {

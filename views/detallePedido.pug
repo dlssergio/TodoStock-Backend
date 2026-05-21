@@ -1,0 +1,51 @@
+html
+  head
+    title Detalle del Pedido
+    style.
+      body {
+        font-family: Arial, sans-serif;
+        margin: 20px;
+        background-color: #f4f4f4;
+      }
+      .card {
+        background: white;
+        padding: 20px;
+        border-radius: 5px;
+        max-width: 500px;
+      }
+      ul {
+        list-style: none;
+        padding: 0;
+      }
+      li {
+        padding: 8px 0;
+        border-bottom: 1px solid #ddd;
+      }
+      a {
+        display: inline-block;
+        margin-top: 15px;
+        text-decoration: none;
+        color: #0066cc;
+      }
+
+  body
+    h1 Información del Pedido
+    
+    .card
+      h2 Cliente: #{pedido.cliente}
+      p 
+        strong Estado: 
+        | #{pedido.estado}
+      p 
+        strong Total a pagar: 
+        | $#{pedido.total}
+      
+      h3 Artículos comprados:
+      if pedido.productos.length > 0
+        ul
+          each producto in pedido.productos
+            li #{producto.nombre} - $#{producto.precio}
+      else
+        p No hay productos registrados en este pedido.
+        
+    a(href="/pedidos") ← Volver a la lista de pedidos
