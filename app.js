@@ -19,13 +19,15 @@ app.use(express.static('public'));
 // Importar rutas 
 const productosRoutes = require('./routes/productos.routes');
 const pedidosRoutes = require('./routes/pedidos.routes');
+const authRoutes = require('./routes/auth.routes');
 
 // Usar rutas 
 app.use('/productos', productosRoutes);
 app.use('/pedidos', pedidosRoutes);
+app.use('/', authRoutes);
 
 app.get('/', (req, res) => {
-    res.send('TodoStock funcionando. Navega a /productos o /pedidos');
+    res.redirect('/login'); // <--- NUEVO: Ahora redirigimos al login en vez de enviar texto
 });
 
 app.listen(PORT, () => {
