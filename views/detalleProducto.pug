@@ -1,35 +1,74 @@
 html
   head
-    title Detalle del Producto
+    title Detalle del Producto | Todo Stock
     style.
+      :root {
+        --primary: #10b981;
+        --bg-color: #f8fafc;
+        --card-bg: #ffffff;
+        --text-main: #1e293b;
+        --text-muted: #64748b;
+      }
       body {
-        font-family: Arial, sans-serif;
-        margin: 20px;
-        background-color: #f4f4f4;
+        font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        margin: 0;
+        padding: 40px 20px;
+        background-color: var(--bg-color);
+        color: var(--text-main);
+        display: flex;
+        justify-content: center;
       }
+      .detail-container {
+        width: 100%;
+        max-width: 600px;
+      }
+      .header-container {
+        margin-bottom: 25px;
+        border-bottom: 2px solid #e2e8f0;
+        padding-bottom: 15px;
+      }
+      h1 { margin: 0; font-size: 28px; color: #0f172a; }
+      
       .card {
-        background: white;
-        padding: 20px;
-        border-radius: 5px;
-        max-width: 400px;
+        background: var(--card-bg);
+        border-radius: 12px;
+        padding: 40px;
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        border: 1px solid #e2e8f0;
       }
-      a {
-        display: inline-block;
-        margin-top: 15px;
+      .product-title { font-size: 32px; font-weight: bold; margin: 0 0 25px 0; color: #0f172a; }
+      
+      .info-group { margin-bottom: 25px; }
+      .info-label { display: block; font-size: 14px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px; }
+      .info-value { font-size: 28px; font-weight: 600; color: var(--primary); margin: 0; }
+      .stock-value { font-size: 22px; font-weight: 500; color: var(--text-main); margin: 0; }
+      
+      .btn-back {
+        display: inline-flex;
+        align-items: center;
+        margin-top: 30px;
+        color: #475569;
         text-decoration: none;
-        color: #0066cc;
+        font-weight: 600;
+        transition: color 0.2s;
       }
+      .btn-back:hover { color: #0f172a; }
+      .btn-back::before { content: '←'; margin-right: 8px; font-size: 20px; }
 
   body
-    h1 Detalle del Producto
-    
-    .card
-      h2 #{producto.nombre}
-      p 
-        strong Precio: 
-        | $#{producto.precio}
-      p 
-        strong Stock disponible: 
-        | #{producto.stock} unidades
+    .detail-container
+      .header-container
+        h1 🔍 Detalle del Producto
+      
+      .card
+        h2.product-title #{producto.nombre}
         
-    a(href="/productos") ← Volver a la lista de productos
+        .info-group
+          span.info-label Precio Unitario
+          p.info-value $#{producto.precio}
+          
+        .info-group
+          span.info-label Stock Disponible
+          p.stock-value #{producto.stock} unidades
+          
+      a.btn-back(href="/productos") Volver a Géstion de Productos

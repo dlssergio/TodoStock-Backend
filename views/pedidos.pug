@@ -1,61 +1,132 @@
 html
   head
+    title Gestión de Pedidos | Todo Stock
     style.
+      :root {
+        --primary: #2563eb;
+        --primary-hover: #1d4ed8;
+        --bg-color: #f8fafc;
+        --card-bg: #ffffff;
+        --text-main: #1e293b;
+        --text-muted: #64748b;
+      }
       body {
-        font-family: Arial, sans-serif;
-        margin: 20px;
-        background-color: #f4f4f4;
+        font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        margin: 0;
+        padding: 30px;
+        background-color: var(--bg-color);
+        color: var(--text-main);
       }
-
-      h1 {
-        color: #333;
+      .header-container {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 30px;
+        padding-bottom: 20px;
+        border-bottom: 2px solid #e2e8f0;
       }
+      h1 { margin: 0; font-size: 28px; color: #0f172a; }
+      
+      .btn-nav {
+        background-color: var(--primary);
+        color: white;
+        padding: 10px 24px;
+        border-radius: 50px;
+        text-decoration: none;
+        font-weight: 600;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+      }
+      .btn-nav:hover { background-color: var(--primary-hover); transform: translateY(-2px); }
 
-      ul {
-        background: white;
-        padding: 15px;
-        border-radius: 5px;
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+        gap: 20px;
+      }
+      .card {
+        background: var(--card-bg);
+        border-radius: 12px;
+        padding: 20px;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        border: 1px solid #e2e8f0;
+      }
+      .card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 15px;
+      }
+      .client-name { font-size: 18px; font-weight: bold; margin: 0; }
+      .total-badge {
+        background-color: #dcfce7;
+        color: #166534;
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-weight: bold;
+        font-size: 14px;
+      }
+      
+      /* --- LISTA INTERNA DE PRODUCTOS --- */
+      .items-list {
+        background: #f1f5f9;
+        border-radius: 8px;
+        padding: 12px;
         list-style: none;
+        margin: 0 0 20px 0;
+        font-size: 14px;
       }
+      .items-list li {
+        padding: 4px 0;
+        border-bottom: 1px dashed #cbd5e1;
+        display: flex;
+        justify-content: space-between;
+      }
+      .items-list li:last-child { border-bottom: none; }
 
-      li {
-        padding: 5px 0;
-        border-bottom: 1px solid #ddd;
+      .actions { display: flex; gap: 10px; flex-wrap: wrap; }
+      .btn {
+        padding: 8px 16px; border-radius: 6px; text-decoration: none;
+        font-size: 14px; font-weight: 500; cursor: pointer;
+        border: none; text-align: center; flex: 1; transition: opacity 0.2s;
       }
-//-
+      .btn:hover { opacity: 0.8; }
+      .btn-view { background-color: #f1f5f9; color: #334155; border: 1px solid #cbd5e1; }
+      .btn-edit { background-color: #f59e0b; color: white; }
+      .btn-delete { background-color: #ef4444; color: white; }
+
   body
-    h1 Lista de Pedidos
+    .header-container
+      h1 📋 Gestión de Pedidos
+      a.btn-nav(href="/productos") 📦 Ir a Productos
 
     if pedidos.length > 0
-      p Pedidos registrados:
-      ul
+      .grid
         each pedido in pedidos
-          li Cliente: #{pedido.cliente} - Total: $#{pedido.total}
-    else
-      p No hay pedidos cargados
--//
-  body
-    h1 Lista de Pedidos
-
-    if pedidos.length > 0
-      p Pedidos registrados:
-      ul
-        each pedido in pedidos
-          li
-          //-
-            strong Cliente: #{pedido.cliente} 
-            | - Total: $#{pedido.total}
-          -//
-
-            strong Cliente: #{pedido.cliente} - Total: $#{pedido.total} 
-            a(href=`/pedidos/${pedido._id}`) (Ver detalle del pedido)
+          .card
+            .card-header
+              h3.client-name 👤 #{pedido.cliente}
+              span.total-badge $#{pedido.total}
             
-            //- sublista con los productos
-            ul(style="margin-top: 10px; margin-bottom: 15px; background: #e9ecef; border-radius: 4px;")
+            ul.items-list
               if pedido.productos.length > 0
                 each producto in pedido.productos
-                  li #{producto.nombre} - Precio: $#{producto.precio}
+                  li 
+                    span #{producto.nombre}
+                    span $#{producto.precio}
               else
-                li No hay productos registrados para este pedido.
+                li(style="color: #64748b; font-style: italic;") Sin productos detallados.
+
+            .actions
+              a.btn.btn-view(href=`/pedidos/${pedido._id}`) Ver Detalle
+              
+              //- LÓGICA DE ROLES: Solo visible para Admin
+              if usuario && usuario.rol === 'admin'
+                button.btn.btn-edit Editar
+                button.btn.btn-delete Eliminar
     else
-      p No hay pedidos cargados
+      p(style="text-align: center; color: #64748b; font-size: 18px; margin-top: 50px;") No hay pedidos registrados.
+
+    //- Contenedores y Scripts de Socket.io listos para la tarea de Guillermina
+    #toast-container(style="position: fixed; top: 20px; right: 20px; z-index: 9999;")
+    script(src="/socket.io/socket.io.js")

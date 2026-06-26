@@ -4,10 +4,15 @@ const Producto = require('../models/Producto');
 const getProductos = async (req, res) => {
     try {
         const productos = await Producto.find();
-        res.render('productos', { productos });
+        
+        // DATOS MOCK: Simulamos que Julio ya hizo el login y nos pasó este usuario
+        const usuarioFalso = { nombre: "Walter", rol: "admin" }; 
+
+        // Le enviamos a Pug tanto los productos como el usuario
+        res.render('productos', { productos, usuario: usuarioFalso });
     } catch (error) {
-        console.error("Error al obtener productos:", error);
-        res.status(500).send("Error interno del servidor al cargar los productos.");
+        console.error("Error:", error);
+        res.status(500).send("Error interno");
     }
 };
 
