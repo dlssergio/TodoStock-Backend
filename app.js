@@ -23,7 +23,8 @@ app.use(cookieParser());
 
 // 4. CONFIGURACIÓN DE VISTAS (PUG)
 app.set('view engine', 'pug');
-app.set('views', './views');
+const path = require('path');
+app.set('views', path.join(__dirname, 'views'));
 app.use(express.static('public'));
 
 // 5. RUTAS
@@ -38,6 +39,11 @@ app.use('/', authRoutes);
 app.get('/', (req, res) => {
     res.redirect('/login');
 });
+
+app.use((err, req, res, next) => {
+    console.error("ERROR DETECTADO:", err.stack);
+    res.status(500).send('Algo salió muy mal: ' + err.message);
+  });
 
 // 6. EVENTOS DE WEBSOCKETS
 io.on('connection', (socket) => {
