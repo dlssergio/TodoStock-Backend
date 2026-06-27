@@ -10,9 +10,10 @@ const verificarRol = (rolesPermitidos) => {
 
         try {
             const decoded = jwt.verify(token, process.env.JWT_SECRET);
-            req.user = decoded;
+            req.user = decoded; // Acá adentro ahora vive { id, username, role }
 
-            if (!rolesPermitidos.includes(req.user.username)) {
+            // 🌟 CORRECCIÓN: Comparamos contra el ROL real guardado en el token
+            if (!rolesPermitidos.includes(req.user.role)) {
                 return res.status(403).render('login', { error: 'No tiene permisos para acceder a esta sección.' });
             }
 

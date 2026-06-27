@@ -19,21 +19,23 @@ const login = async (req, res) => {
         }
 
         const token = jwt.sign(
-            { username: usuarioEncontrado.username },
+            { 
+                id: usuarioEncontrado._id, 
+                username: usuarioEncontrado.username,
+                role: usuarioEncontrado.role 
+            },
             process.env.JWT_SECRET,
             { expiresIn: '2h' }
         );
 
         res.cookie('token', token, { httpOnly: true });
         
- console.log(`Login exitoso para el rol: ${username}`);
-
-    if (username === 'admin') {
-        res.redirect('/productos');
-    } else {
-        res.redirect('/pedidos');
-    }
-    
+        if (usuarioEncontrado.role === 'admin') {
+            res.redirect('/productos');
+        } else {
+            res.redirect('/pedidos');
+        }
+        
     } catch (error) {
         console.error(error);
         res.render('login', { error: 'Error interno del servidor' });
