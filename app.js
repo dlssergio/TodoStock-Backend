@@ -1,5 +1,6 @@
 require('dotenv').config();
 const express = require('express');
+const cookieParser = require('cookie-parser');
 const conectarDB = require('./config/db');
 
 const app = express();
@@ -7,27 +8,24 @@ const PORT = process.env.PORT || 3000;
 
 conectarDB();
 
-// Middleware para leer JSON y formularios
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser());
 
-// Configurar Pug y archivos estáticos
 app.set('view engine', 'pug');
 app.set('views', './views');
 app.use(express.static('public'));
 
-// Importar rutas 
 const productosRoutes = require('./routes/productos.routes');
 const pedidosRoutes = require('./routes/pedidos.routes');
 const authRoutes = require('./routes/auth.routes');
 
-// Usar rutas 
 app.use('/productos', productosRoutes);
 app.use('/pedidos', pedidosRoutes);
 app.use('/', authRoutes);
 
 app.get('/', (req, res) => {
-    res.redirect('/login'); // <--- NUEVO: Ahora redirigimos al login en vez de enviar texto
+    res.redirect('/login');
 });
 
 app.listen(PORT, () => {
