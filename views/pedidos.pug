@@ -98,8 +98,10 @@ html
   body
     .header-container
       h1 📋 Gestión de Pedidos
-      a.btn-nav(href="/productos") 📦 Ir a Productos
-
+      //- LÓGICA DE ROLES: Ocultar botón si el usuario es de ventas
+      if usuario && usuario.role !== 'ventas'
+        a.btn-nav(href="/productos") 📦 Ir a Productos
+      
     if pedidos.length > 0
       .grid
         each pedido in pedidos

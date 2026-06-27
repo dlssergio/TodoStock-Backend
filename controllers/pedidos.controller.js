@@ -5,7 +5,7 @@ const Producto = require('../models/Producto');
 const getPedidos = async (req, res) => {
     try {
         const pedidos = await Pedido.find().populate('productos');
-        res.render('pedidos', { pedidos });
+        res.render('pedidos', { pedidos, usuario: req.user });
     } catch (error) {
         console.error("Error al obtener pedidos:", error);
         res.status(500).send("Error interno del servidor al cargar los pedidos.");

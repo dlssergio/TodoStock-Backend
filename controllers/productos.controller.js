@@ -5,11 +5,9 @@ const getProductos = async (req, res) => {
     try {
         const productos = await Producto.find();
         
-        // DATOS MOCK: Simulamos que Julio ya hizo el login y nos pasó este usuario
-        const usuarioFalso = { nombre: "Walter", rol: "admin" }; 
-
-        // Le enviamos a Pug tanto los productos como el usuario
-        res.render('productos', { productos, usuario: usuarioFalso });
+        // Eliminamos el usuarioFalso y pasamos el usuario real (req.user) que nos da el token de Julio
+        res.render('productos', { productos, usuario: req.user });
+        
     } catch (error) {
         console.error("Error:", error);
         res.status(500).send("Error interno");

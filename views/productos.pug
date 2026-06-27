@@ -105,7 +105,7 @@ html
               a.btn.btn-view(href=`/productos/${producto._id}`) Ver Detalle
               
               //- LÓGICA DE ROLES: Solo visible para Admin
-              if usuario && usuario.rol === 'admin'
+              if usuario && usuario.role === 'admin'
                 button.btn.btn-edit Editar
                 button.btn.btn-delete Eliminar
     else
