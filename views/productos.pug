@@ -119,28 +119,38 @@ html
 
     script.
       const socket = io();
-      socket.on('alerta-stock', (data) => {
-        
-        // Elemento visual de la notificación flotante
+
+      function mostrarToast(mensaje, colorFondo) {
         const toast = document.createElement('div');
-        toast.style.background = '#ff4444'; // Fondo rojo para alertas
+        toast.style.background = colorFondo;
         toast.style.color = 'white';
         toast.style.padding = '15px 25px';
         toast.style.marginBottom = '10px';
         toast.style.borderRadius = '5px';
         toast.style.boxShadow = '0 4px 6px rgba(0,0,0,0.1)';
         toast.style.transition = 'opacity 0.5s ease';
-        
-        // Mensaje que viene del backend
-        toast.innerText = data.mensaje;
+        toast.innerText = mensaje;
 
-        // Lo agregamos al contenedor
         const container = document.getElementById('toast-container');
         container.appendChild(toast);
 
-        // Hacemos que desaparezca solo después de 4 segundos
         setTimeout(() => {
           toast.style.opacity = '0';
-          setTimeout(() => toast.remove(), 500); // Lo borramos del HTML tras desvanecerse
+          setTimeout(() => toast.remove(), 500);
         }, 4000);
+      }
+
+      // Escucha la alerta de stock crítico
+      socket.on('alerta-stock', (data) => {
+        mostrarToast(data.mensaje, '#ff4444');
+      });
+
+      // AGREGADO: Escucha también cuando se registra un pedido nuevo
+      socket.on('nuevoPedido', (data) => {
+        mostrarToast(data.mensaje, '#10b981');
+      });
+      
+      // Escucha cuando se registra un producto nuevo
+      socket.on('nuevoProducto', (data) => {
+        mostrarToast(data.mensaje, '#3b82f6');
       });
