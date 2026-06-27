@@ -48,10 +48,12 @@ io.on('connection', (socket) => {
     });
 });
 
-// 7. INICIO DEL SERVIDOR (Únicamente server.listen)
-server.listen(PORT, () => {
-    console.log(`Servidor corriendo con Socket.io en http://localhost:${PORT}`);
-});
+// 7. INICIO DEL SERVIDOR (Solo si no estamos en Vercel)
+if (!process.env.VERCEL) {
+    server.listen(PORT, () => {
+        console.log(`Servidor corriendo con Socket.io en http://localhost:${PORT}`);
+    });
+}
 
 // 8. EXPORTACIÓN PARA VERCEL (Siempre al final)
 module.exports = app;
