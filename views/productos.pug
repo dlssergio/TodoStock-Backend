@@ -27,7 +27,7 @@ html
       }
       h1 { margin: 0; font-size: 28px; color: #0f172a; }
       
-      /* --- BOTÓN DE NAVEGACIÓN PRINCIPAL --- */
+      /* BOTÓN DE NAVEGACIÓN PRINCIPAL */
       .btn-nav {
         background-color: var(--primary);
         color: white;
@@ -43,7 +43,7 @@ html
         transform: translateY(-2px);
       }
 
-      /* --- GRILLA DE TARJETAS --- */
+      /* GRILLA DE TARJETAS */
       .grid {
         display: grid;
         grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
@@ -63,7 +63,7 @@ html
       .card-price { font-size: 24px; color: var(--primary); font-weight: bold; margin: 0 0 5px 0; }
       .card-stock { color: var(--text-muted); font-size: 14px; margin-bottom: 20px; }
       
-      /* --- BOTONES DE ACCIÓN --- */
+      /* BOTONES DE ACCIÓN */
       .actions {
         display: flex;
         gap: 10px;
@@ -118,13 +118,10 @@ html
     script(src="/socket.io/socket.io.js")
 
     script.
-      // 1. Nos conectamos al servidor de Sockets
       const socket = io();
-
-      // 2. Escuchamos un evento específico (por ejemplo: 'alerta-stock')
       socket.on('alerta-stock', (data) => {
         
-        // 3. Creamos el elemento visual de la notificación flotante
+        // Elemento visual de la notificación flotante
         const toast = document.createElement('div');
         toast.style.background = '#ff4444'; // Fondo rojo para alertas
         toast.style.color = 'white';
@@ -134,14 +131,14 @@ html
         toast.style.boxShadow = '0 4px 6px rgba(0,0,0,0.1)';
         toast.style.transition = 'opacity 0.5s ease';
         
-        // 4. Le inyectamos el mensaje que viene del backend
+        // Mensaje que viene del backend
         toast.innerText = data.mensaje;
 
-        // 5. Lo agregamos al contenedor de la pantalla
+        // Lo agregamos al contenedor
         const container = document.getElementById('toast-container');
         container.appendChild(toast);
 
-        // 6. Hacemos que desaparezca solo después de 4 segundos
+        // Hacemos que desaparezca solo después de 4 segundos
         setTimeout(() => {
           toast.style.opacity = '0';
           setTimeout(() => toast.remove(), 500); // Lo borramos del HTML tras desvanecerse
