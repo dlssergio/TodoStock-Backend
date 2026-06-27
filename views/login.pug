@@ -1,20 +1,121 @@
 doctype html
 html(lang="es")
   head
-    title Login - TodoStock
-    //- Si tienen un CSS común, vinculalo acá
-    link(rel="stylesheet", href="/css/style.css") 
+    title Acceso al Sistema | Todo Stock
+    style.
+      :root {
+        --primary: #2563eb;
+        --primary-hover: #1d4ed8;
+        --bg-color: #f8fafc;
+        --card-bg: #ffffff;
+        --text-main: #1e293b;
+        --text-muted: #64748b;
+        --danger: #ef4444;
+        --danger-bg: #fef2f2;
+      }
+      body {
+        font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: var(--bg-color);
+        color: var(--text-main);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+      }
+      .login-container {
+        width: 100%;
+        max-width: 400px;
+        padding: 20px;
+      }
+      .card {
+        background: var(--card-bg);
+        border-radius: 12px;
+        padding: 40px;
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        border: 1px solid #e2e8f0;
+        text-align: center;
+      }
+      .logo {
+        font-size: 28px;
+        font-weight: bold;
+        color: #0f172a;
+        margin-bottom: 5px;
+      }
+      .subtitle {
+        font-size: 14px;
+        color: var(--text-muted);
+        margin-bottom: 30px;
+      }
+      .form-group {
+        margin-bottom: 20px;
+        text-align: left;
+      }
+      .form-label {
+        display: block;
+        font-size: 14px;
+        font-weight: 600;
+        margin-bottom: 8px;
+        color: var(--text-main);
+      }
+      .form-control {
+        width: 100%;
+        padding: 12px 15px;
+        border: 1px solid #cbd5e1;
+        border-radius: 8px;
+        font-size: 16px;
+        box-sizing: border-box;
+        transition: border-color 0.2s;
+      }
+      .form-control:focus {
+        outline: none;
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+      }
+      .btn-submit {
+        width: 100%;
+        background-color: var(--primary);
+        color: white;
+        border: none;
+        padding: 12px;
+        border-radius: 8px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background-color 0.2s;
+        margin-top: 10px;
+      }
+      .btn-submit:hover {
+        background-color: var(--primary-hover);
+      }
+      .error-badge {
+        background-color: var(--danger-bg);
+        color: var(--danger);
+        padding: 12px;
+        border-radius: 8px;
+        font-size: 14px;
+        font-weight: 500;
+        margin-bottom: 20px;
+        border: 1px solid #fecaca;
+      }
+
   body
-    h1 Acceso al Sistema
-    if error
-      p(style="color: red;") #{error}
-    
-    form(action="/login", method="POST")
-      div
-        label(for="username") Usuario:
-        input(type="text", name="username", id="username", required)
-      div
-        label(for="password") Contraseña:
-        input(type="password", name="password", id="password", required)
-      div
-        button(type="submit") Entrar
+    .login-container
+      .card
+        div.logo 📦 Todo Stock
+        div.subtitle Panel de Administración
+        
+        if error
+          div.error-badge #{error}
+        
+        form(action="/login", method="POST")
+          div.form-group
+            label.form-label(for="username") Usuario
+            input.form-control(type="text", name="username", id="username", placeholder="Ingrese su usuario", required)
+          
+          div.form-group
+            label.form-label(for="password") Contraseña
+            input.form-control(type="password", name="password", id="password", placeholder="Ingrese su contraseña", required)
+          
+          button.btn-submit(type="submit") Ingresar al Sistema
