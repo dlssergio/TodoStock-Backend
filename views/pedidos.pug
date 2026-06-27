@@ -123,7 +123,7 @@ html
               a.btn.btn-view(href=`/pedidos/${pedido._id}`) Ver Detalle
               
               //- LÓGICA DE ROLES: Solo visible para Admin
-              if usuario && usuario.rol === 'admin'
+              if usuario && usuario.role === 'admin'
                 button.btn.btn-edit Editar
                 button.btn.btn-delete Eliminar
     else
@@ -132,3 +132,34 @@ html
     //- Contenedores y Scripts de Socket.io para la tarea de Guillermina
     #toast-container(style="position: fixed; top: 20px; right: 20px; z-index: 9999;")
     script(src="/socket.io/socket.io.js")
+
+    script.
+      const socket = io();
+
+      function mostrarToast(mensaje, colorFondo) {
+        const toast = document.createElement('div');
+        toast.style.background = colorFondo;
+        toast.style.color = 'white';
+        toast.style.padding = '15px 25px';
+        toast.style.marginBottom = '10px';
+        toast.style.borderRadius = '5px';
+        toast.style.boxShadow = '0 4px 6px rgba(0,0,0,0.1)';
+        toast.style.transition = 'opacity 0.5s ease';
+        toast.innerText = mensaje;
+
+        const container = document.getElementById('toast-container');
+        container.appendChild(toast);
+
+        setTimeout(() => {
+          toast.style.opacity = '0';
+          setTimeout(() => toast.remove(), 500);
+        }, 4000);
+      }
+
+      socket.on('alerta-stock', (data) => {
+        mostrarToast(data.mensaje, '#ff4444');
+      });
+
+      socket.on('nuevoPedido', (data) => {
+        mostrarToast(data.mensaje, '#10b981');
+      });

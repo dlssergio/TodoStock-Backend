@@ -28,6 +28,23 @@ app.get('/', (req, res) => {
     res.redirect('/login');
 });
 
-app.listen(PORT, () => {
-    console.log(`Servidor corriendo en http://localhost:${PORT}`);
+//CONFIGURACIÓN DE SOCKET.IO:
+const http = require('http');
+const server = http.createServer(app);
+const { Server } = require('socket.io');
+const io = new Server(server); //
+
+// Conexiones de los clientes (para pruebas en consola)
+io.on('connection', (socket) => {
+    console.log('¡Un usuario se conectó por WebSockets!');
+    
+    socket.on('disconnect', () => {
+        console.log('Usuario desconectado');
+    });
+});
+
+app.set('io', io);
+
+server.listen(PORT, () => {
+    console.log(`Servidor corriendo con Socket.io en http://localhost:${PORT}`);
 });
