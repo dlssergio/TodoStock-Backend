@@ -1,0 +1,63 @@
+html
+  head
+    title Nuevo Producto | Todo Stock
+    style.
+      :root {
+        --primary: #10b981;
+        --primary-hover: #059669;
+        --bg-color: #f8fafc;
+        --card-bg: #ffffff;
+        --text-main: #1e293b;
+      }
+      body {
+        font-family: 'Segoe UI', system-ui, sans-serif;
+        margin: 0; padding: 40px 20px;
+        background-color: var(--bg-color); color: var(--text-main);
+        display: flex; justify-content: center;
+      }
+      .form-container { width: 100%; max-width: 500px; }
+      .card {
+        background: var(--card-bg); border-radius: 12px; padding: 40px;
+        box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); border: 1px solid #e2e8f0;
+      }
+      h1 { margin: 0 0 25px 0; font-size: 28px; color: #0f172a; border-bottom: 2px solid #e2e8f0; padding-bottom: 15px;}
+      
+      .form-group { margin-bottom: 20px; }
+      label { display: block; margin-bottom: 8px; font-weight: bold; color: #334155; }
+      input {
+        width: 100%; padding: 10px; border: 1px solid #cbd5e1;
+        border-radius: 6px; font-size: 16px; box-sizing: border-box;
+      }
+      
+      .btn-submit {
+        background: var(--primary); color: white; padding: 12px 24px;
+        border: none; border-radius: 6px; font-size: 16px; font-weight: bold;
+        cursor: pointer; width: 100%; transition: background 0.3s; margin-top: 10px;
+      }
+      .btn-submit:hover { background: var(--primary-hover); }
+      .btn-cancel {
+        display: block; text-align: center; margin-top: 15px;
+        color: #64748b; text-decoration: none; font-weight: 500;
+      }
+
+  body
+    .form-container
+      .card
+        h1 ➕ Crear Nuevo Producto
+        
+        //- Por POST a la ruta principal de productos
+        form(action="/productos" method="POST")
+          .form-group
+            label(for="nombre") Nombre del Producto:
+            input(type="text" name="nombre" id="nombre" required placeholder="Ej: Lavandina 5 Lts")
+            
+          .form-group
+            label(for="precio") Precio (en pesos):
+            input(type="number" name="precio" id="precio" required min="0" step="0.01" placeholder="Ej: 5800")
+            
+          .form-group
+            label(for="stock") Stock Inicial:
+            input(type="number" name="stock" id="stock" required min="0" placeholder="Ej: 30")
+                
+          button.btn-submit(type="submit") Guardar Producto
+          a.btn-cancel(href="/productos") Cancelar y Volver

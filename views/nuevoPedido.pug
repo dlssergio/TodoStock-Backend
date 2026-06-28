@@ -1,0 +1,75 @@
+html
+  head
+    title Nuevo Pedido | Todo Stock
+    style.
+      :root {
+        --primary: #2563eb;
+        --bg-color: #f8fafc;
+        --card-bg: #ffffff;
+        --text-main: #1e293b;
+      }
+      body {
+        font-family: 'Segoe UI', system-ui, sans-serif;
+        margin: 0; padding: 40px 20px;
+        background-color: var(--bg-color); color: var(--text-main);
+        display: flex; justify-content: center;
+      }
+      .form-container { width: 100%; max-width: 600px; }
+      .card {
+        background: var(--card-bg); border-radius: 12px; padding: 40px;
+        box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); border: 1px solid #e2e8f0;
+      }
+      h1 { margin: 0 0 25px 0; font-size: 28px; color: #0f172a; border-bottom: 2px solid #e2e8f0; padding-bottom: 15px;}
+      
+      .form-group { margin-bottom: 20px; }
+      label { display: block; margin-bottom: 8px; font-weight: bold; color: #334155; }
+      input[type="text"] {
+        width: 100%; padding: 10px; border: 1px solid #cbd5e1;
+        border-radius: 6px; font-size: 16px; box-sizing: border-box;
+      }
+      
+      .checkbox-list {
+        background: #f1f5f9; padding: 15px; border-radius: 6px;
+        max-height: 200px; overflow-y: auto;
+      }
+      .checkbox-item {
+        display: block; margin-bottom: 10px; cursor: pointer;
+      }
+      .checkbox-item input { margin-right: 10px; }
+      
+      .btn-submit {
+        background: var(--primary); color: white; padding: 12px 24px;
+        border: none; border-radius: 6px; font-size: 16px; font-weight: bold;
+        cursor: pointer; width: 100%; transition: background 0.3s;
+      }
+      .btn-submit:hover { background: #1d4ed8; }
+      .btn-cancel {
+        display: block; text-align: center; margin-top: 15px;
+        color: #64748b; text-decoration: none;
+      }
+
+  body
+    .form-container
+      .card
+        h1 ➕ Crear Nuevo Pedido
+        
+        //- El formulario envía los datos por POST a la ruta /pedidos
+        form(action="/pedidos" method="POST")
+          .form-group
+            label(for="cliente") Nombre del Cliente:
+            input(type="text" name="cliente" id="cliente" required placeholder="Ej: Leonel Scaloni")
+            
+          .form-group
+            label Selecciona los Productos:
+            .checkbox-list
+              if productos.length > 0
+                each producto in productos
+                  label.checkbox-item
+                    //- Pasamos el ID del producto al backend
+                    input(type="checkbox" name="productos" value=producto._id)
+                    | #{producto.nombre} - $#{producto.precio}
+              else
+                p No hay productos disponibles en la base de datos.
+                
+          button.btn-submit(type="submit") Guardar Pedido
+          a.btn-cancel(href="/pedidos") Cancelar y Volver

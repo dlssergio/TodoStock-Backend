@@ -90,7 +90,13 @@ html
   body
     .header-container
       h1 📦 Gestión de Productos
-      a.btn-nav(href="/pedidos") 📋 Ir a Pedidos
+      div(style="display: flex; gap: 15px; align-items: center;")
+      
+        //- Solo Admin puede crear producto
+        if usuario && usuario.role === 'admin'
+          a.btn-nav(href="/productos/nuevo" style="background-color: #f59e0b;") ➕ Nuevo Producto
+          
+        a.btn-nav(href="/pedidos") 📋 Ir a Pedidos
 
     if productos.length > 0
       .grid
@@ -104,17 +110,20 @@ html
             .actions
               a.btn.btn-view(href=`/productos/${producto._id}`) Ver Detalle
               
-              //- LÓGICA DE ROLES: Solo visible para Admin
+              //- Solo Admin
               if usuario && usuario.role === 'admin'
-                button.btn.btn-edit Editar
-                button.btn.btn-delete Eliminar
+                //- Botón Editar
+                a.btn.btn-edit(href=`/productos/editar/${producto._id}`) Editar
+                
+                //- Botón Eliminar
+                form(action=`/productos/eliminar/${producto._id}` method="POST" style="flex: 1; display: flex; margin: 0;")
+                  button.btn.btn-delete(type="submit" onclick="return confirm('¿Estás seguro de que deseas eliminar este producto de la base de datos?');" style="width: 100%;") Eliminar
     else
       p(style="text-align: center; color: #64748b; font-size: 18px; margin-top: 50px;") No hay productos registrados en el sistema.
 
     //- Contenedor invisible donde aparecerán las notificaciones flotantes
     #toast-container(style="position: fixed; top: 20px; right: 20px; z-index: 9999;")
 
-    //- Importamos el cliente oficial de Socket.io
     script(src="/socket.io/socket.io.js")
 
     script.
@@ -145,7 +154,7 @@ html
         mostrarToast(data.mensaje, '#ff4444');
       });
 
-      // AGREGADO: Escucha también cuando se registra un pedido nuevo
+      // Escucha también cuando se registra un pedido nuevo
       socket.on('nuevoPedido', (data) => {
         mostrarToast(data.mensaje, '#10b981');
       });

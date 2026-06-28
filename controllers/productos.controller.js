@@ -3,7 +3,7 @@ const Producto = require('../models/Producto');
 // Definimos un número como "Stock Mínimo" para disparar la alerta
 const STOCK_MINIMO_CRITICO = 5;
 
-// 1. OBTENER TODOS LOS PRODUCTOS
+// OBTENER TODOS LOS PRODUCTOS
 const getProductos = async (req, res) => {
     try {
         const productos = await Producto.find();
@@ -14,7 +14,7 @@ const getProductos = async (req, res) => {
     }
 };
 
-// 2. CREAR UN NUEVO PRODUCTO
+// CREAR UN NUEVO PRODUCTO
 const createProducto = async (req, res) => {
     try {
         const { nombre, precio, stock } = req.body;
@@ -51,7 +51,7 @@ const createProducto = async (req, res) => {
     }
 };
 
-// 3. OBTENER UN PRODUCTO POR SU ID
+// OBTENER UN PRODUCTO POR SU ID
 const getProductoById = async (req, res) => {
     try {
         const producto = await Producto.findById(req.params.id);
@@ -65,4 +65,50 @@ const getProductoById = async (req, res) => {
     }
 };
 
-module.exports = { getProductos, createProducto, getProductoById };
+// Formulario de nuevo producto
+const renderNuevoProducto = async (req, res) => {
+    try {
+        res.render('nuevoProducto', { usuario: req.user });
+    } catch (error) {
+        console.error("Error al cargar formulario:", error);
+        res.status(500).send("Error interno al cargar el formulario");
+    }
+};
+
+// Cargar el formulario de edición con los datos del producto
+const renderEditarProducto = async (req, res) => {
+    try {
+        const producto = await Producto.findById(req.params.id);
+        if (!producto) return res.status(404).send("Producto no encontrado");
+        res.render('editarProducto', { producto, usuario: req.user });
+    } catch (error) {
+        console.error("Error al cargar edición:", error);
+        res.status(500).send("Error interno al cargar el formulario");
+    }
+};
+
+// Guardar los cambios editados en la base de datos
+const updateProducto = async (req, res) => {
+    try {
+        const { nombre, precio, stock } = req.body;
+        // Encuentra por ID y actualiza con los datos del formulario
+        await Producto.findByIdAndUpdate(req.params.id, { nombre, precio, stock });
+        res.redirect('/productos');
+    } catch (error) {
+        console.error("Error al actualizar:", error);
+        res.status(400).send("Error al actualizar el producto");
+    }
+};
+
+// Eliminar el producto de la base de datos
+const deleteProducto = async (req, res) => {
+    try {
+        await Producto.findByIdAndDelete(req.params.id);
+        res.redirect('/productos');
+    } catch (error) {
+        console.error("Error al eliminar:", error);
+        res.status(500).send("Error al intentar eliminar el producto");
+    }
+};
+
+module.exports = {getProductos, createProducto, getProductoById, renderNuevoProducto, renderEditarProducto, updateProducto, deleteProducto};

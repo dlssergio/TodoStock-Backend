@@ -98,9 +98,15 @@ html
   body
     .header-container
       h1 📋 Gestión de Pedidos
-      //- LÓGICA DE ROLES: Ocultar botón si el usuario es de ventas
-      if usuario && usuario.role !== 'ventas'
-        a.btn-nav(href="/productos") 📦 Ir a Productos
+      div(style="display: flex; gap: 15px; align-items: center;")
+      
+        //- Admin y Ventas ven el botón de crear pedido
+        if usuario && (usuario.role === 'admin' || usuario.role === 'ventas')
+          a.btn-nav(href="/pedidos/nuevo" style="background-color: #f59e0b;") ➕ Nuevo Pedido
+        
+        //-  Visible admin y deposito
+        if usuario && usuario.role !== 'ventas'
+          a.btn-nav(href="/productos") 📦 Ir a Productos
       
     if pedidos.length > 0
       .grid
@@ -122,44 +128,17 @@ html
             .actions
               a.btn.btn-view(href=`/pedidos/${pedido._id}`) Ver Detalle
               
-              //- LÓGICA DE ROLES: Solo visible para Admin
+              //- Solo visible para Admin
               if usuario && usuario.role === 'admin'
-                button.btn.btn-edit Editar
-                button.btn.btn-delete Eliminar
+                //- Botón Editar
+                a.btn.btn-edit(href=`/pedidos/editar/${pedido._id}`) Editar
+                
+                //- Botón Eliminar
+                form(action=`/pedidos/eliminar/${pedido._id}` method="POST" style="flex: 1; display: flex; margin: 0;")
+                  button.btn.btn-delete(type="submit" onclick="return confirm('¿Estás seguro de que deseas eliminar este pedido?');" style="width: 100%;") Eliminar
     else
       p(style="text-align: center; color: #64748b; font-size: 18px; margin-top: 50px;") No hay pedidos registrados.
 
     //- Contenedores y Scripts de Socket.io para la tarea de Guillermina
     #toast-container(style="position: fixed; top: 20px; right: 20px; z-index: 9999;")
     script(src="/socket.io/socket.io.js")
-
-    script.
-      const socket = io();
-
-      function mostrarToast(mensaje, colorFondo) {
-        const toast = document.createElement('div');
-        toast.style.background = colorFondo;
-        toast.style.color = 'white';
-        toast.style.padding = '15px 25px';
-        toast.style.marginBottom = '10px';
-        toast.style.borderRadius = '5px';
-        toast.style.boxShadow = '0 4px 6px rgba(0,0,0,0.1)';
-        toast.style.transition = 'opacity 0.5s ease';
-        toast.innerText = mensaje;
-
-        const container = document.getElementById('toast-container');
-        container.appendChild(toast);
-
-        setTimeout(() => {
-          toast.style.opacity = '0';
-          setTimeout(() => toast.remove(), 500);
-        }, 4000);
-      }
-
-      socket.on('alerta-stock', (data) => {
-        mostrarToast(data.mensaje, '#ff4444');
-      });
-
-      socket.on('nuevoPedido', (data) => {
-        mostrarToast(data.mensaje, '#10b981');
-      });

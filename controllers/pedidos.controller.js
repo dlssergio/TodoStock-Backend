@@ -18,12 +18,18 @@ const getPedidos = async (req, res) => {
 // CREAR UN NUEVO PEDIDO
 const createPedido = async (req, res) => {
     try {
-        const { cliente, productos, estado } = req.body;
+        // 'let' para poder modificar 'productos'
+        let { cliente, productos, estado } = req.body;
 
         if (!productos || productos.length === 0) {
             return res.status(400).send("Un pedido debe contener al menos un producto.");
         }
 
+        if (typeof productos === 'string') {
+            productos = [productos];
+        }
+
+        // productos siempre será un Array
         const productosDb = await Producto.find({ _id: { $in: productos } });
         const io = req.app.get('io');
         const usuarioAccion = req.user ? req.user.username : 'Sistema';
@@ -31,12 +37,13 @@ const createPedido = async (req, res) => {
         let totalCalculado = 0;
 
         console.log("--- INICIANDO CÁLCULO DE PEDIDO ---");
-
+        
         for (const id of productos) {
             const idLimpio = id.trim();
             const productoEncontrado = productosDb.find(p => p._id.toString() === idLimpio);
 
             if (productoEncontrado) {
+                
                 const precioReal = Number(productoEncontrado.precio);
                 totalCalculado += precioReal;
                 console.log(`✅ Sumando: ${productoEncontrado.nombre} -> $${precioReal}`);
@@ -45,7 +52,7 @@ const createPedido = async (req, res) => {
                 productoEncontrado.stock = Math.max(productoEncontrado.stock - 1, 0);
                 await productoEncontrado.save();
 
-                // Evaluamos si el stock quedó bajo con el dato real ya actualizado
+                // Evaluamos si el stock quedó bajo
                 if (productoEncontrado.stock <= STOCK_MINIMO_CRITICO && io) {
                     io.emit('alerta-stock', {
                         mensaje: `Stock crítico: "${productoEncontrado.nombre}" quedó con ${productoEncontrado.stock} unidades tras el pedido de ${cliente}.`,
@@ -71,7 +78,6 @@ const createPedido = async (req, res) => {
 
         await nuevoPedido.save();
 
-        // Evento separado para avisar que hay un pedido nuevo (no es alerta de stock)
         if (io) {
             io.emit('nuevoPedido', {
                 mensaje: `Nuevo pedido registrado para ${cliente} por $${totalCalculado}.`,
@@ -102,4 +108,90 @@ const getPedidoById = async (req, res) => {
     }
 };
 
-module.exports = { getPedidos, createPedido, getPedidoById };
+// Mostrar el formulario de nuevo pedido
+const renderNuevoPedido = async (req, res) => {
+    try {
+        // Buscamos todos los productos disponibles para llenar las opciones del formulario
+        const productos = await Producto.find();
+        res.render('nuevoPedido', { productos, usuario: req.user });
+    } catch (error) {
+        console.error("Error al cargar formulario:", error);
+        res.status(500).send("Error interno al cargar el formulario");
+    }
+};
+
+// Cargar el formulario de edición
+const renderEditarPedido = async (req, res) => {
+    try {
+        const pedido = await Pedido.findById(req.params.id);
+        if (!pedido) return res.status(404).send("Pedido no encontrado");
+        res.render('editarPedido', { pedido, usuario: req.user });
+    } catch (error) {
+        console.error("Error al cargar edición:", error);
+        res.status(500).send("Error interno al cargar el formulario");
+    }
+};
+
+// ACTUALIZAR PEDIDO Y GESTIONAR STOCK
+const updatePedido = async (req, res) => {
+    try {
+        const { cliente, estado } = req.body;
+        
+        // Buscamos el pedido original 
+        const pedidoOriginal = await Pedido.findById(req.params.id);
+        if (!pedidoOriginal) return res.status(404).send("Pedido no encontrado");
+
+        // Cancela por primera vez, devolvemos el stock
+        if (pedidoOriginal.estado !== 'cancelado' && estado === 'cancelado') {
+            for (const id of pedidoOriginal.productos) {
+                // $inc es un comando nativo de MongoDB para incrementar un número
+                await Producto.findByIdAndUpdate(id, { $inc: { stock: 1 } });
+            }
+        } 
+        // Si estaba cancelado, stock devuelto y lo reactivan, volvemos a restar
+        else if (pedidoOriginal.estado === 'cancelado' && estado !== 'cancelado') {
+            for (const id of pedidoOriginal.productos) {
+                await Producto.findByIdAndUpdate(id, { $inc: { stock: -1 } });
+            }
+        }
+
+        // Nuevos datos del pedido
+        pedidoOriginal.cliente = cliente;
+        pedidoOriginal.estado = estado;
+        await pedidoOriginal.save();
+
+        res.redirect('/pedidos');
+    } catch (error) {
+        console.error("Error al actualizar:", error);
+        res.status(400).send("Error al actualizar el pedido");
+    }
+};
+
+// ELIMINAR PEDIDO Y DEVOLVER STOCK
+const deletePedido = async (req, res) => {
+    try {
+        // Pedido que se va a borrar
+        const pedidoOriginal = await Pedido.findById(req.params.id);
+        
+        if (!pedidoOriginal) {
+            return res.status(404).send("El pedido no existe");
+        }
+
+        // El stock si el pedido NO estaba cancelado
+        if (pedidoOriginal.estado !== 'cancelado') {
+            for (const id of pedidoOriginal.productos) {
+                await Producto.findByIdAndUpdate(id, { $inc: { stock: 1 } });
+            }
+        }
+
+        // Borramos el pedido de la base de datos
+        await Pedido.findByIdAndDelete(req.params.id);
+        
+        res.redirect('/pedidos');
+    } catch (error) {
+        console.error("Error al eliminar:", error);
+        res.status(500).send("Error al intentar eliminar el pedido");
+    }
+};
+
+module.exports = { getPedidos, createPedido, getPedidoById, renderNuevoPedido, renderEditarPedido, updatePedido, deletePedido };
