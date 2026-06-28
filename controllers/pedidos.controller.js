@@ -18,7 +18,6 @@ const getPedidos = async (req, res) => {
 // CREAR UN NUEVO PEDIDO
 const createPedido = async (req, res) => {
     try {
-        // 'let' para poder modificar 'productos'
         let { cliente, productos, estado } = req.body;
 
         if (!productos || productos.length === 0) {
@@ -29,45 +28,40 @@ const createPedido = async (req, res) => {
             productos = [productos];
         }
 
-        // productos siempre será un Array
         const productosDb = await Producto.find({ _id: { $in: productos } });
         const io = req.app.get('io');
         const usuarioAccion = req.user ? req.user.username : 'Sistema';
 
         let totalCalculado = 0;
+        const alertasStock = []; // ← NUEVO: acumulamos las alertas acá
 
-        console.log("--- INICIANDO CÁLCULO DE PEDIDO ---");
-        
         for (const id of productos) {
             const idLimpio = id.trim();
             const productoEncontrado = productosDb.find(p => p._id.toString() === idLimpio);
 
             if (productoEncontrado) {
-                
                 const precioReal = Number(productoEncontrado.precio);
                 totalCalculado += precioReal;
-                console.log(`✅ Sumando: ${productoEncontrado.nombre} -> $${precioReal}`);
 
-                // Descontamos stock real al confirmar el pedido
                 productoEncontrado.stock = Math.max(productoEncontrado.stock - 1, 0);
                 await productoEncontrado.save();
 
-                // Evaluamos si el stock quedó bajo
-                if (productoEncontrado.stock <= STOCK_MINIMO_CRITICO && io) {
-                    io.emit('alerta-stock', {
-                        mensaje: `Stock crítico: "${productoEncontrado.nombre}" quedó con ${productoEncontrado.stock} unidades tras el pedido de ${cliente}.`,
-                        productoId: productoEncontrado._id,
-                        stockActual: productoEncontrado.stock,
-                        usuario: usuarioAccion
-                    });
+                if (productoEncontrado.stock <= STOCK_MINIMO_CRITICO) {
+                    // Guardamos la alerta para el query param
+                    alertasStock.push(`${productoEncontrado.nombre}:${productoEncontrado.stock}`);
+
+                    // Y avisamos en tiempo real a otros usuarios conectados
+                    if (io) {
+                        io.emit('alerta-stock', {
+                            mensaje: `Stock crítico: "${productoEncontrado.nombre}" quedó con ${productoEncontrado.stock} unidades tras el pedido de ${cliente}.`,
+                            productoId: productoEncontrado._id,
+                            stockActual: productoEncontrado.stock,
+                            usuario: usuarioAccion
+                        });
+                    }
                 }
-            } else {
-                console.log(`ALERTA: No se encontró el ID: ${idLimpio}`);
             }
         }
-
-        console.log("2. TOTAL FINAL CALCULADO: $", totalCalculado);
-        console.log("-----------------------------------");
 
         const nuevoPedido = new Pedido({
             cliente,
@@ -86,7 +80,13 @@ const createPedido = async (req, res) => {
             });
         }
 
-        res.redirect('/pedidos');
+        // Armamos el query param, juntando todas las alertas si hay más de una
+        let queryExtra = '';
+        if (alertasStock.length > 0) {
+            queryExtra = `&alertaStock=${encodeURIComponent(alertasStock.join(','))}`;
+        }
+
+        res.redirect(`/pedidos?creado=true${queryExtra}`);
 
     } catch (error) {
         console.error("Error al crear pedido:", error);

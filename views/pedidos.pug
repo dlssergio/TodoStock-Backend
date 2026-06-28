@@ -142,3 +142,52 @@ html
     //- Contenedores y Scripts de Socket.io para la tarea de Guillermina
     #toast-container(style="position: fixed; top: 20px; right: 20px; z-index: 9999;")
     script(src="/socket.io/socket.io.js")
+
+    script.
+      const socket = io();
+
+      function mostrarToast(mensaje, colorFondo) {
+        const toast = document.createElement('div');
+        toast.style.background = colorFondo;
+        toast.style.color = 'white';
+        toast.style.padding = '15px 25px';
+        toast.style.marginBottom = '10px';
+        toast.style.borderRadius = '5px';
+        toast.style.boxShadow = '0 4px 6px rgba(0,0,0,0.1)';
+        toast.style.transition = 'opacity 0.5s ease';
+        toast.innerText = mensaje;
+
+        const container = document.getElementById('toast-container');
+        container.appendChild(toast);
+
+        setTimeout(() => {
+          toast.style.opacity = '0';
+          setTimeout(() => toast.remove(), 500);
+        }, 4000);
+      }
+
+      socket.on('alerta-stock', (data) => {
+        mostrarToast(data.mensaje, '#ff4444');
+      });
+
+      socket.on('nuevoPedido', (data) => {
+        mostrarToast(data.mensaje, '#10b981');
+      });
+
+     window.addEventListener('DOMContentLoaded', () => {
+        const urlParams = new URLSearchParams(window.location.search);
+
+        if (urlParams.has('creado')) {
+          mostrarToast('¡Pedido creado y stock actualizado correctamente!', '#2563eb');
+        }
+
+        if (urlParams.has('alertaStock')) {
+          const alertas = urlParams.get('alertaStock').split(',');
+          alertas.forEach(item => {
+            const [nombreProducto, stockActual] = item.split(':');
+            mostrarToast(`⚠️ Stock crítico: "${nombreProducto}" quedó con ${stockActual} unidades.`, '#ff4444');
+          });
+        }
+
+        window.history.replaceState({}, document.title, window.location.pathname);
+      });

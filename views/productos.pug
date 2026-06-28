@@ -163,3 +163,15 @@ html
       socket.on('nuevoProducto', (data) => {
         mostrarToast(data.mensaje, '#3b82f6');
       });
+
+      window.addEventListener('DOMContentLoaded', () => {
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.has('creado')) {
+          mostrarToast('¡Producto registrado con éxito en el sistema!', '#10b981');
+        }
+        if (urlParams.has('alertaStock')) {
+          const [nombreProducto, stockActual] = urlParams.get('alertaStock').split(':');
+          mostrarToast(`Stock crítico: "${nombreProducto}" quedó con ${stockActual} unidades.`, '#ff4444');
+        }
+          window.history.replaceState({}, document.title, window.location.pathname);
+        });

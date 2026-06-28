@@ -27,13 +27,12 @@ const createProducto = async (req, res) => {
         const io = req.app.get('io');
 
         if (io) {
-            // Avisar a todos que se creó un producto (sin importar el stock)
+            // Avisamos a otros usuarios conectados en tiempo real
             io.emit('nuevoProducto', {
                 mensaje: `Nuevo producto registrado: "${nombre}" con un stock inicial de ${stockNumerico} u. (por ${usuarioAccion}).`,
                 productoId: nuevoProducto._id
             });
 
-            // Evaluamos si se creó con stock bajo
             if (stockNumerico <= STOCK_MINIMO_CRITICO) {
                 io.emit('alerta-stock', {
                     mensaje: `¡Alerta de Stock Crítico! El producto "${nombre}" fue creado con apenas ${stockNumerico} unidades por el usuario [${usuarioAccion}].`,
@@ -44,7 +43,13 @@ const createProducto = async (req, res) => {
             }
         }
 
-        res.redirect('/productos');
+        // Armamos el query param para avisarle al usuario que lo creó
+        let queryExtra = '';
+        if (stockNumerico <= STOCK_MINIMO_CRITICO) {
+            queryExtra = `&alertaStock=${encodeURIComponent(nombre)}:${stockNumerico}`;
+        }
+
+        res.redirect(`/productos?creado=true${queryExtra}`);
     } catch (error) {
         console.error("Error al crear producto:", error);
         res.status(400).send("Error al guardar el producto. Verifique las validaciones.");
