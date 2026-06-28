@@ -13,8 +13,8 @@ Sistema integral de gestión de inventario, pedidos y control de stock desarroll
 # 🚀 Características Principales
 
 - **Arquitectura MVC:** Separación lógica de Modelos, Vistas (Pug) y Controladores.
-- **Autenticación y Autorización:** Seguridad implementada con JSON Web Tokens (JWT) almacenados en cookies.
-- **Control de Roles:** Vistas y permisos adaptados según el rol del usuario (`admin` y `ventas`).
+- **Autenticación y Autorización:** Seguridad implementada mediante JSON Web Tokens (JWT) almacenados en cookies.
+- **Control de Roles:** Vistas y permisos adaptados según el rol del usuario (`admin`, `ventas` y `deposito`).
 - **Gestión de Datos (CRUD):** Operaciones completas para las colecciones de **Productos** y **Pedidos** utilizando MongoDB Atlas.
 - **Alertas en Tiempo Real:** Notificaciones instantáneas de stock crítico mediante WebSockets con Socket.io.
 - **Testing Automatizado:** Pruebas unitarias de rutas y controladores utilizando Jest.
@@ -75,6 +75,20 @@ con soporte completo para WebSockets.
 
 ---
 
+# 🔑 Credenciales de Prueba
+
+El sistema incluye los siguientes usuarios para realizar pruebas según el rol correspondiente.
+
+| Rol | Usuario | Contraseña |
+|------|----------|------------|
+| Administrador | `admin` | `admin123` |
+| Ventas | `ventas` | `venta123` |
+| Depósito | `deposito` | `depo123` |
+
+> **Nota:** Estas credenciales son únicamente para fines de evaluación y pruebas del proyecto.
+
+---
+
 # 🌐 Entorno de Producción (Vercel)
 
 El proyecto se encuentra desplegado y funcionando en Vercel.
@@ -95,7 +109,7 @@ https://todo-stock-backend.vercel.app
 
 ---
 
-# Equipo de Desarrollo
+# 👥 Equipo de Desarrollo
 
 **Grupo 5 - Comisión E**
 
@@ -106,6 +120,6 @@ https://todo-stock-backend.vercel.app
 
 ---
 
-## Profesor
+## 👨‍🏫 Profesor
 
 **Emir Eliezer García Ontiveros**
