@@ -113,7 +113,7 @@ https://todo-stock-backend.vercel.app
 
 **Grupo 5 - Comisión E**
 
-- **Walter David Ciancio** — Testing y QA
+- **Walter David Ciancio** — Testing y Plantillas PUG
 - **Guillermina Zen Cáffaro** — Lógica de WebSockets y Alertas
 - **Sergio de los Santos** — Infraestructura, Vistas y Despliegue
 - **Mario Julio Alegre** — Autenticación y Seguridad
